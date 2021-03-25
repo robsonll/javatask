@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+
+<h:head>
+    <title>Recruitment Task</title>
+</h:head>
+<h:outputStylesheet name="primeicons/primeicons.css" library="primefaces"/>
+<h:body>
+    <h:form id="form">
+        <div class="card">
+
+            <p:tabView>
+                <p:tab title="Customers">
+
+                    <p:dataTable id="customersDT" var="customer" value="#{customerView.customers}" rows="10"
+                                 paginator="true" style="width:90%;text-align:center;" widgetVar="customersTable"
+                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                                 rowsPerPageTemplate="5,10,{ShowAll|'All'}">
+
+                        <!--<f:facet name="header">Customers</f:facet>-->
+
+                        <p:column headerText="Name" style="width:30%;" sortBy="#{customer.lastName}">
+                            <h:outputText value="#{customer.lastName}, #{customer.firstName}"/>
+                        </p:column>
+
+                        <p:column headerText="City" style="width:20%;" sortBy="#{customer.city}">
+                            <h:outputText value="#{customer.city}"/>
+                        </p:column>
+
+                        <p:column headerText="Country" style="width:20%;" sortBy="#{customer.country}">
+                            <h:outputText value="#{customer.country}"/>
+                        </p:column>
+
+                        <p:column headerText="Rentals #" style="width:20%;" sortBy="#{customer.rentals.size()}">
+                            <h:outputText value="#{customer.rentals.size()}"/>
+                        </p:column>
+
+                        <p:column headerText="Rentals $" style="width:20%;" sortBy="#{customer.rentalAmount}">
+                            <h:outputText value="#{customer.rentalAmount}">
+                                <f:convertNumber pattern="#0.00"/>
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="Customer Info" style="width:10%;text-align: center">
+                            <p:commandButton update=":form:customerDetail" oncomplete="PF('customerInfoDialog').show()"
+                                             icon="pi pi-id-card" title="View">
+                                <f:setPropertyActionListener value="#{customer}" target="#{customerView.selectedCustomer}"/>
+                            </p:commandButton>
+                        </p:column>
+
+                        <p:column headerText="Rentals" style="width:10%;text-align: center">
+                            <p:commandButton update=":form:customerRentals" oncomplete="PF('customerRentalsDialog').show()"
+                                             icon="pi pi-list" title="View">
+                                <f:setPropertyActionListener value="#{customer}" target="#{customerView.selectedCustomer}"/>
+                            </p:commandButton>
+                        </p:column>
+
+                    </p:dataTable>
+
+                </p:tab>
+
+                <p:tab title="Films">
+
+                    <p:dataTable id="filmsDT" var="film" value="#{filmView.films}" rows="10"
+                                 paginator="true" style="width:100%;text-align:center;" widgetVar="filmsTable"
+                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                                 rowsPerPageTemplate="5,10,{ShowAll|'All'}">
+
+                        <p:column headerText="Title" style="width:15%;" sortBy="#{film.title}">
+                            <h:outputText value="#{film.title}"/>
+                        </p:column>
+
+                        <p:column headerText="Category" style="width:10%;" sortBy="#{film.category}">
+                            <h:outputText value="#{film.category}"/>
+                        </p:column>
+
+                        <p:column headerText="Description" style="width:50%;" sortBy="#{film.description}">
+                            <h:outputText value="#{film.description}"/>
+                        </p:column>
+
+                        <p:column headerText="Rating" style="width:5%;" sortBy="#{film.rating}">
+                            <h:outputText value="#{film.rating}"/>
+                        </p:column>
+
+                        <p:column headerText="Rentals Duration" style="width:10%;" sortBy="#{film.rentalDuration}">
+                            <h:outputText value="#{film.rentalDuration}"/>
+                        </p:column>
+
+                        <p:column headerText="Rentals" style="width:5%;text-align: center">
+                            <p:commandButton update=":form:filmRentals" oncomplete="PF('filmRentalsDialog').show()"
+                                             icon="pi pi-users" title="View">
+                                <f:setPropertyActionListener value="#{film}" target="#{filmView.selectedFilm}"/>
+                            </p:commandButton>
+                        </p:column>
+
+                        <p:column headerText="Details" style="width:5%;text-align: center">
+                            <p:commandButton update=":form:filmDetails" oncomplete="PF('filmDetailsDialog').show()"
+                                             icon="pi pi-video" title="View">
+                                <f:setPropertyActionListener value="#{film}" target="#{filmView.selectedFilm}"/>
+                            </p:commandButton>
+                        </p:column>
+
+                    </p:dataTable>
+
+                </p:tab>
+            </p:tabView>
+
+        </div>
+
+    <!-- ******************************************************************************************-->
+    <!-- * Customer dialogs                                                                        -->
+    <!-- ******************************************************************************************-->
+        <p:dialog header="Customer Info" widgetVar="customerInfoDialog" modal="true" showEffect="fade"
+                  hideEffect="fade" resizable="false">
+            <p:outputPanel id="customerDetail" style="text-align:center;">
+                <p:column rendered="#{not empty customerView.selectedCustomer}">
+                    <div class="card">
+                        <p:panelGrid columns="2">
+
+                            <h:outputText value="Id:"/>
+                            <h:outputText value="#{customerView.selectedCustomer.id}"/>
+
+                            <h:outputText value="First Name:"/>
+                            <h:outputText value="#{customerView.selectedCustomer.firstName}"/>
+
+                            <h:outputText value="Last Name:"/>
+                            <h:outputText value="#{customerView.selectedCustomer.lastName}"/>
+
+                            <h:outputText value="Address:"/>
+                            <h:outputText value="#{customerView.selectedCustomer.address}"/>
+
+                            <h:outputText value="City:"/>
+                            <h:outputText value="#{customerView.selectedCustomer.city}"/>
+
+                            <h:outputText value="District:"/>
+                            <h:outputText value="#{customerView.selectedCustomer.district}"/>
+
+                            <h:outputText value="Country:"/>
+                            <h:outputText value="#{customerView.selectedCustomer.country}"/>
+
+                            <h:outputText value="Phone:"/>
+                            <h:outputText value="#{customerView.selectedCustomer.phone}"/>
+
+                            <h:outputText value="# of Rentals:"/>
+                            <h:outputText value="#{customerView.selectedCustomer.rentals.size()}"/>
+
+                            <h:outputText value="$ of Rentals:"/>
+                            <h:outputText value="#{customerView.selectedCustomer.rentalAmount}">
+                                <f:convertNumber pattern="#0.00"/>
+                            </h:outputText>
+                        </p:panelGrid>
+                    </div>
+                </p:column>
+            </p:outputPanel>
+        </p:dialog>
+
+        <p:dialog header="Customer Rentals" widgetVar="customerRentalsDialog" modal="true" showEffect="fade"
+                  hideEffect="fade" resizable="false" width="60%">
+            <p:outputPanel id="customerRentals" style="text-align:center;">
+                <p:column rendered="#{not empty customerView.selectedCustomer}">
+
+                    <p:dataTable id="customerRentalsDT" var="film" value="#{customerView.selectedCustomer.rentals}" rows="10"
+                                 paginator="true" widgetVar="customerRentalsTable"
+                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                                 rowsPerPageTemplate="5,10,{ShowAll|'All'}">
+
+                        <p:column headerText="Film Title" style="width:50%;" sortBy="#{film.filmTitle}">
+                            <h:outputText value="#{film.filmTitle}"/>
+                        </p:column>
+
+                        <p:column headerText="Rental Date" style="width:20%;" sortBy="#{film.rentalDate}">
+                            <h:outputText value="#{film.formatedRentalDate}">
+                                <f:convertDateTime type="date" pattern="MM.DD.yyyy" />
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="Rental Duration" style="width:10%;" sortBy="#{film.rentalDuration}">
+                            <h:outputText value="#{film.rentalDuration}"/>
+                        </p:column>
+
+                        <p:column headerText="Rental Cost" style="width:20%;" sortBy="#{film.totalPayment}">
+                            <h:outputText value="#{film.totalPayment}">
+                                <f:convertNumber pattern="#0.00"/>
+                            </h:outputText>
+                        </p:column>
+
+                    </p:dataTable>
+
+                </p:column>
+            </p:outputPanel>
+        </p:dialog>
+
+        <!-- ****************************************************************************************** -->
+        <!-- * Film dialogs                                                                             -->
+        <!-- ****************************************************************************************** -->
+
+        <p:dialog header="Film Details" widgetVar="filmDetailsDialog" modal="true" showEffect="fade"
+                  hideEffect="fade" resizable="false">
+            <p:outputPanel id="filmDetails" style="text-align:center;">
+                <p:column rendered="#{not empty filmView.selectedFilm}">
+                    <div class="card">
+                        <p:panelGrid columns="2">
+
+                            <h:outputText value="Id:"/>
+                            <h:outputText value="#{filmView.selectedFilm.id}"/>
+
+                            <h:outputText value="Title:"/>
+                            <h:outputText value="#{filmView.selectedFilm.title}"/>
+
+                            <h:outputText value="Category:"/>
+                            <h:outputText value="#{filmView.selectedFilm.category}"/>
+
+                            <h:outputText value="Rating:"/>
+                            <h:outputText value="#{filmView.selectedFilm.rating}"/>
+
+                            <h:outputText value="Actors:"/>
+                            <h:outputText value="#{filmView.selectedFilm.actors}"/>
+
+                            <h:outputText value="Length:"/>
+                            <h:outputText value="#{filmView.selectedFilm.length}"/>
+
+                            <h:outputText value="Description:"/>
+                            <h:outputText value="#{filmView.selectedFilm.description}"/>
+
+                            <h:outputText value="Rental Duration:"/>
+                            <h:outputText value="#{filmView.selectedFilm.rentalDuration}"/>
+
+                            <h:outputText value="Replacement Cost:"/>
+                            <h:outputText value="#{filmView.selectedFilm.replacementCost}"/>
+
+                            <h:outputText value="Special Features:"/>
+                            <h:outputText value="#{filmView.selectedFilm.specialFeatures}"/>
+                        </p:panelGrid>
+                    </div>
+                </p:column>
+            </p:outputPanel>
+        </p:dialog>
+
+        <p:dialog header="Film Rentals" widgetVar="filmRentalsDialog" modal="true" showEffect="fade"
+                  hideEffect="fade" resizable="false" width="60%">
+            <p:outputPanel id="filmRentals" style="text-align:center;">
+                <p:column rendered="#{not empty filmView.selectedFilm}">
+
+                    <p:dataTable id="filmRentalsDT" var="customer" value="#{customerView.getCustomerListByFilmId(filmView.selectedFilm.id)}" rows="10"
+                                 paginator="true" widgetVar="filmRentalsTable"
+                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                                 rowsPerPageTemplate="5,10,{ShowAll|'All'}">
+
+                        <p:column headerText="Customer Name" style="width:50%;" sortBy="#{customer.lastName}">
+                            <h:outputText value="#{customer.lastName}"/>
+                        </p:column>
+
+                    </p:dataTable>
+
+                </p:column>
+            </p:outputPanel>
+        </p:dialog>
+
+    </h:form>
+</h:body>
+</html>
