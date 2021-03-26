@@ -1,20 +1,17 @@
 package com.javatask.recruitment;
 
-import javax.faces.application.Application;
-import javax.faces.webapp.FacesServlet;
-import javax.servlet.ServletContext;
-
+import com.sun.faces.config.ConfigureListener;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
-import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.context.ServletContextAware;
 
-import com.sun.faces.config.ConfigureListener;
+import javax.faces.webapp.FacesServlet;
+import javax.servlet.ServletContext;
 
 @Configuration
 @EnableAutoConfiguration

@@ -35,8 +35,9 @@ public class Customer {
     private String phone;
     @Field("Rentals")
     private List<Rental> rentals;
-    @Transient
-    private long rentalAmount;
+
+    //@Transient
+    //private long rentalAmount;
 
     public Double getRentalAmount() {
         return rentals.stream().mapToDouble(o -> o.getTotalPayment()).sum();
